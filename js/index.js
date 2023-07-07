@@ -109,6 +109,7 @@ createApp({
                     // console.log(response.data);
                     this.getInfos();
                 })
+                deleteTicketModal.hide();
         },
         // 搜尋
         search(searchData) {
