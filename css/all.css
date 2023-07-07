@@ -1,0 +1,20 @@
+/* 無搜尋結果 */
+.cantFind-Area {
+	display: none;
+	margin-top: 70px;
+	text-align: center;
+
+	h3 {
+		font-size: 2rem;
+		margin-bottom: 50px;
+		font-weight: bold;
+	}
+
+	img {
+		margin: 0 auto;
+	}
+}
+
+.block {
+	display: block;
+}
