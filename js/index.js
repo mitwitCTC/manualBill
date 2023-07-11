@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://6b16-114-36-59-27.ngrok-free.app'
+const Api = 'https://f746-114-36-58-201.ngrok-free.app'
 
 function myFunction() {
     var x = document.getElementById("myLocalDate").defaultValue;
