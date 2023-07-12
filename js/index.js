@@ -34,13 +34,23 @@ createApp({
         }
     },
     methods: {
+        checkLogin() {
+            if (sessionStorage.getItem('user') == 'admin') {
+                // const userValue =  sessionStorage.getItem('user');
+                this.getStations()
+                this.getInfos();
+            }else{
+                alert("請登入");
+                window.location = 'login.html'
+            }
+        },
         getStations() {
             const getStationsApi = `${Api}/car_in_manual/staionId`;
             axios
                 .get(getStationsApi)
                 .then((response) => {
                     // console.log(response.data);
-                    this.stations =  response.data;
+                    this.stations = response.data;
                 })
         },
         getInfos() {
@@ -57,11 +67,11 @@ createApp({
             if (status === 'create') {
                 this.isNewTicket = true;
                 this.tempTicket = {};
-                let currentTime = new Date();                
-                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() +30 ))).format("YYYY-MM-DD HH:mm:ss");
+                let currentTime = new Date();
+                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                 // console.log('this.tempTicket.time_limit', this.tempTicket.time_limit);
-                if(this.tempTicket.parkingType == "多日車"){
-                    this.tempTicket.payAmount =  0;
+                if (this.tempTicket.parkingType == "多日車") {
+                    this.tempTicket.payAmount = 0;
                 }
             } else if (status === 'edit') {
                 this.isNewTicket = false;
@@ -79,13 +89,13 @@ createApp({
             }
             let updateTicketApi = `${Api}/car_in_manual/createInfo`
             if (this.isNewTicket) {
-                let currentTime = new Date();                
-                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() +30 ))).format("YYYY-MM-DD HH:mm:ss");
+                let currentTime = new Date();
+                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
-                        if(this.tempTicket.parkingType == "多日車"){
-                            this.tempTicket.payAmount =  0;
+                        if (this.tempTicket.parkingType == "多日車") {
+                            this.tempTicket.payAmount = 0;
                         }
                         alert(response.data.message);
                         this.getInfos();
@@ -112,14 +122,14 @@ createApp({
                     // console.log(response.data);
                     this.getInfos();
                 })
-                deleteTicketModal.hide();
+            deleteTicketModal.hide();
         },
         // 搜尋
         search(searchData) {
             const searchDataApi = `${Api}/car_in_manual/searchInfo`;
             const cantFindArea = document.querySelector('.cantFind-Area');
             axios
-                .post(searchDataApi, { target: {plate: this.searchData} })
+                .post(searchDataApi, { target: { plate: this.searchData } })
                 .then((response) => {
                     // console.log(response.data.data);
                     this.tickets = response.data.data;
@@ -139,8 +149,9 @@ createApp({
         },
     },
     mounted() {
-        this.getStations();
-        this.getInfos();
+        this.checkLogin();
+        // this.getStations();
+        // this.getInfos();
         ticketModal = new bootstrap.Modal('#ticketModal');
         deleteTicketModal = new bootstrap.Modal('#deleteTicketModal');
     }

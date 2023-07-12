@@ -16,13 +16,21 @@ createApp({
     methods: {
         // login
         login() {
-            if(this.user.account !== "admin" || this.user.password !== "admin"){
+            if (this.user.account !== "admin" || this.user.password !== "admin") {
                 alert("帳號或密碼錯誤");
-            }else{
+            } else {
                 alert("登入成功");
-                window.location = 'index.html';
+                    window.location = 'index.html';
+                    sessionStorage.setItem("user", this.user.account);
+            };
+        },
+        checkLogin() {
+            if (sessionStorage.getItem('user') == 'admin') {
+                window.location = 'index.html'
             }
-        }
+        },
     },
-    mounted() {}
+    mounted() {
+        this.checkLogin();
+     }
 }).mount('#app');
