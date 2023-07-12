@@ -8,21 +8,25 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
     <link rel="stylesheet" href="./css/all.css">
-    <title>人工開單</title>
+    <title>人工開票</title>
 </head>
 
 <body>
     <div id="app">
         <div class="container">
-            <div class="header mb-3">
-                <h1 class="d-flex justify-content-center my-3">人工開單</h1>
+            <div class="header mb-3 my-3">
+                <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
                 <span class="ms-5 d-flex justify-content-between">
                     <form class="d-flex">
-                        <input v-model="searchData" class="form-control me-2" type="search" placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;" @keyup.enter="search(searchdata)" id="search">
-                        <button class="btn btn-warning text-black me-2" type="button" @click="search(searchdata)" >搜尋</button>
-                        <button class="btn btn-outline-warning text-black" type="submit" @click="clearSearch">清除搜尋結果</button>
+                        <input v-model="searchData" class="form-control me-2" type="search" placeholder="輸入車牌搜尋"
+                            aria-label="Search" style="width: 150px;" @keyup.enter="search(searchdata)" id="search">
+                        <button class="btn btn-warning text-black me-2" type="button"
+                            @click="search(searchdata)">搜尋</button>
+                        <button class="btn btn-outline-warning text-black" type="submit"
+                            @click="clearSearch">清除搜尋結果</button>
                     </form>
-                    <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')" data-bs-target="#ticketModal">
+                    <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')"
+                        data-bs-target="#ticketModal">
                         新增
                     </button>
                 </span>
@@ -48,7 +52,8 @@
                     </thead>
                     <tbody class="fs-6">
                         <tr v-for="(ticket, id) in tickets" :key="ticket.id" class="text-center">
-                            <td><img src="./img/delete.png" @click="openDeleteTicketModal(ticket)" alt="delete" style="width: 25px; cursor: pointer;" class="delete">
+                            <td><img src="./img/delete.png" @click="openDeleteTicketModal(ticket)" alt="delete"
+                                    style="width: 25px; cursor: pointer;" class="delete">
                             </td>
                             <td v-if="ticket.stationId == 436">應安總公司</td>
                             <td v-if="ticket.stationId == 437">助安總公司</td>
@@ -61,7 +66,8 @@
                             <td>{{ ticket.time_limit }}</td>
                             <td>{{ ticket.message }}</td>
                             <td class="d-flex justify-content-around">
-                                <a href="#" @click="openTicketModal('edit', ticket)"><img src="./img/edit.png" alt="edit" style="width: 25px;"></a>
+                                <a href="#" @click="openTicketModal('edit', ticket)"><img src="./img/edit.png"
+                                        alt="edit" style="width: 25px;"></a>
                             </td>
                         </tr>
                     </tbody>
@@ -74,8 +80,8 @@
             </div>
 
             <!-- 開票/編輯 modal -->
-            <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel" aria-hidden="true"
+                data-bs-backdrop="static">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header bg-warning">
@@ -96,9 +102,9 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput"
-                                            v-model="tempTicket.parkName" required>
-                                        <label for="floatingInput">請輸入場站名稱</label>
+                                    <input type="text" class="form-control" id="floatingInput"
+                                        v-model="tempTicket.parkName" required>
+                                    <label for="floatingInput">請輸入場站名稱</label>
                                 </div>
 
                                 <div class="form-floating mb-3">
@@ -125,23 +131,23 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                    <input type="number" class="form-control" id="floatingInput"
-                                        v-model="tempTicket.payAmount" required>
+                                    <input v-if="tempTicket.parkingType != '多日車'" type="number" class="form-control"
+                                        id="floatingInput" v-model="tempTicket.payAmount" required>
                                     <label for="floatingInput">請輸入金額</label>
                                 </div>
 
-                                <div class="form-floating mb-3">
+                                <!-- <div class="form-floating mb-3">
                                     <input type="datetime-local" class="form-control" id="floatingInput" step="1"
                                         v-model="tempTicket.time_limit" required>
                                     <label for="floatingInput">請輸入繳費期限</label>
-                                </div>
+                                </div> -->
 
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
                                         v-model="tempTicket.message">
                                     <label for="floatingInput">請輸入備註</label>
                                 </div>
-
+                                <!-- <p class="text-danger">預設繳費期限為現在時間加半小時，如需調整請再行編輯</p> -->
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">取消</button>
@@ -162,9 +168,9 @@
                                 </div>
 
                                 <div class="form-floating mb-3">
-                                        <input type="text" class="form-control" id="floatingInput"
-                                            v-model="tempTicket.parkName" required disabled>
-                                        <label for="floatingInput">請輸入場站名稱</label>
+                                    <input type="text" class="form-control" id="floatingInput"
+                                        v-model="tempTicket.parkName" required disabled>
+                                    <label for="floatingInput">請輸入場站名稱</label>
                                 </div>
 
                                 <div class="form-floating mb-3">
@@ -250,6 +256,7 @@
         crossorigin='anonymous'></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
     <!-- <script src="https://unpkg.com/vee-validate"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/4.5.8/vee-validate.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@vee-validate/rules@4.5.8/dist/vee-validate-rules.min.js"></script>

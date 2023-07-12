@@ -1,14 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://f746-114-36-58-201.ngrok-free.app'
-
-function myFunction() {
-    var x = document.getElementById("myLocalDate").defaultValue;
-    document.getElementById("demo").innerHTML = x;
-    const NowDate = new Date();
-    console.log(NowDate);
-}
-
+const Api = 'https://317f-114-36-58-201.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -48,7 +40,7 @@ createApp({
                 .get(getStationsApi)
                 .then((response) => {
                     // console.log(response.data);
-                    this.stations =  response.data
+                    this.stations =  response.data;
                 })
         },
         getInfos() {
@@ -65,6 +57,12 @@ createApp({
             if (status === 'create') {
                 this.isNewTicket = true;
                 this.tempTicket = {};
+                let currentTime = new Date();                
+                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() +30 ))).format("YYYY-MM-DD HH:mm:ss");
+                // console.log('this.tempTicket.time_limit', this.tempTicket.time_limit);
+                if(this.tempTicket.parkingType == "多日車"){
+                    this.tempTicket.payAmount =  0;
+                }
             } else if (status === 'edit') {
                 this.isNewTicket = false;
                 this.tempTicket = Object.assign({}, ticket);
@@ -81,10 +79,15 @@ createApp({
             }
             let updateTicketApi = `${Api}/car_in_manual/createInfo`
             if (this.isNewTicket) {
+                let currentTime = new Date();                
+                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() +30 ))).format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
-                        alert(response.data.message)
+                        if(this.tempTicket.parkingType == "多日車"){
+                            this.tempTicket.payAmount =  0;
+                        }
+                        alert(response.data.message);
                         this.getInfos();
                     })
                 // console.log(this.tempTicket);
