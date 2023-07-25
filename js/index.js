@@ -69,6 +69,7 @@ createApp({
             } else if (status === 'edit') {
                 this.isNewTicket = false;
                 this.tempTicket = Object.assign({}, ticket);
+                this.tempTicket.time_limit=this.tempTicket.time_limit.split(' ')[0]+'T'+this.tempTicket.time_limit.split(' ')[1];
             }
         },
         openDeleteTicketModal(ticket) {
@@ -82,8 +83,8 @@ createApp({
             }
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
-                // let currentTime = new Date();
-                // this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
+                let currentTime = new Date();
+                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
