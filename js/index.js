@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://317f-114-36-58-201.ngrok-free.app'
+const Api = 'https://17d8-39-12-128-107.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -8,25 +8,8 @@ let deleteTicketModal = null;
 createApp({
     data() {
         return {
-            tickets: [
-                // {
-                //     id: 1,
-                //     parkNames: "應安總公司",
-                //     station:
-                //     {
-                //         stationName: '測試',
-                //         stationId: 1
-                //     },
-                //     plate: 'AAA-111',
-                //     type: '臨停會員',
-                //     arrivalTime: '2023-05-05 15:15:15',
-                //     fee: 100,
-                //     time_limit: '2023-05-05 23:59:59',
-                //     notes: '備註111'
-                // },
-            ],
-            tempTicket: {
-            },
+            tickets: [],
+            tempTicket: {},
             isNewTicket: false, // 用來確認新增或編輯場站
             parkNames: ['應安總公司', '助安總公司', '及泰總公司'],
             stations: [],
@@ -34,8 +17,18 @@ createApp({
         }
     },
     methods: {
+        logOut(){
+            const logOutApi = `${Api}/pdb/defUser/logOut`
+            axios
+            .post(logOutApi)
+            .then((response => {
+                alert(response.data.message);
+                sessionStorage.removeItem("car_in_manual");
+                window.location = `login.html`;
+            }));
+        },
         checkLogin() {
-            if (sessionStorage.getItem('user') == 'admin') {
+            if (sessionStorage.getItem('car_in_manual')) {
                 // const userValue =  sessionStorage.getItem('user');
                 this.getStations()
                 this.getInfos();
@@ -45,7 +38,7 @@ createApp({
             }
         },
         getStations() {
-            const getStationsApi = `${Api}/car_in_manual/staionId`;
+            const getStationsApi = `${Api}/redeemdb/car_in_manual/staionId`;
             axios
                 .get(getStationsApi)
                 .then((response) => {
@@ -54,7 +47,7 @@ createApp({
                 })
         },
         getInfos() {
-            const getInfosApi = `${Api}/car_in_manual/Info`;
+            const getInfosApi = `${Api}/redeemdb/car_in_manual/Info`;
             axios
                 .get(getInfosApi)
                 .then((response) => {
@@ -87,10 +80,10 @@ createApp({
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
                 this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
             }
-            let updateTicketApi = `${Api}/car_in_manual/createInfo`
+            let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
-                let currentTime = new Date();
-                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
+                // let currentTime = new Date();
+                // this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
@@ -103,7 +96,7 @@ createApp({
                 // console.log(this.tempTicket);
                 ticketModal.hide();
             } else {
-                updateTicketApi = `${Api}/car_in_manual/updateInfo/${this.tempTicket.id}`;
+                updateTicketApi = `${Api}/redeemdb/car_in_manual/updateInfo/${this.tempTicket.id}`;
                 axios
                     .put(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
@@ -126,7 +119,7 @@ createApp({
         },
         // 搜尋
         search(searchData) {
-            const searchDataApi = `${Api}/car_in_manual/searchInfo`;
+            const searchDataApi = `${Api}/redeemdb/car_in_manual/searchInfo`;
             const cantFindArea = document.querySelector('.cantFind-Area');
             axios
                 .post(searchDataApi, { target: { plate: this.searchData } })

@@ -1,5 +1,7 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
+const Api = 'https://17d8-39-12-128-107.ngrok-free.app'
+
 
 let loginCheckData = {};
 
@@ -16,16 +18,23 @@ createApp({
     methods: {
         // login
         login() {
-            if (this.user.account !== "admin" || this.user.password !== "admin") {
-                alert("帳號或密碼錯誤");
-            } else {
-                alert("登入成功");
+            const loginApi = `${Api}/pdb/defUser/login`;
+            axios
+            .post(loginApi, {target: this.user})
+            .then((response) => {
+                if(response.data.returnCode == 0){
+                    console.log(response.data.data.token);
+                    alert(response.data.message);
                     window.location = 'index.html';
-                    sessionStorage.setItem("user", this.user.account);
-            };
+                    sessionStorage.setItem("car_in_manual", response.data.data.token);
+                }else if(response.data.returnCode == 400){
+                    alert(response.data.message)
+                }
+            })
         },
         checkLogin() {
-            if (sessionStorage.getItem('user') == 'admin') {
+            if (sessionStorage.getItem('car_in_manual')) {
+                alert("已登入，即將跳轉頁面")
                 window.location = 'index.html'
             }
         },

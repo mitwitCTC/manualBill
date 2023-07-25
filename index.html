@@ -16,26 +16,29 @@
         <div class="container">
             <div class="header mb-3 my-3">
                 <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
-                <span class="ms-5 d-flex justify-content-between">
-                    <form class="d-flex">
-                        <input v-model="searchData" class="form-control me-2" type="search" placeholder="輸入車牌搜尋"
-                            aria-label="Search" style="width: 150px;" @keyup.enter="search(searchdata)" id="search">
-                        <button class="btn btn-warning text-black me-2" type="button"
-                            @click="search(searchdata)">搜尋</button>
-                        <button class="btn btn-outline-warning text-black" type="submit"
-                            @click="clearSearch">清除搜尋結果</button>
-                    </form>
-                    <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')"
-                        data-bs-target="#ticketModal">
-                        新增
-                    </button>
-                </span>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between">
+                        <form class="d-flex">
+                            <input v-model="searchData" class="form-control me-2" type="search" placeholder="輸入車牌搜尋"
+                                aria-label="Search" style="width: 150px;" @keyup.enter="search(searchdata)" id="search">
+                            <button class="btn btn-warning text-black me-2" type="button"
+                                @click="search(searchdata)">搜尋</button>
+                            <button class="btn btn-outline-warning text-black" type="submit"
+                                @click="clearSearch">清除搜尋結果</button>
+                        </form>
+                        <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')"
+                            data-bs-target="#ticketModal">
+                            新增
+                        </button>
+                    </div>
+                    <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
+                </div>
             </div>
 
 
 
             <div class="table-responsive">
-                <table class="table table-bordered">
+                <table class="table table-bordered table-striped">
                     <thead>
                         <tr class="tt col fs-5 text-center bg-warning">
                             <th class="col text-center"></th>
@@ -89,6 +92,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            {{tempTicket}}
                             <form id="myForm" v-if="isNewTicket">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="floatingSelect"

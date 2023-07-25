@@ -1,10 +1,10 @@
 .loginForm{
-    background: #FFCD3A;
+    background: #ffd965;
     padding: 20px;
 }
 
 .loginTitle{
-    background: #FFCD3A;
+    background: #ffd965;
     padding: 10px;
 }
 
@@ -13,5 +13,5 @@
 }
 
 .btnMain:hover{
-    background: #FFD96A
+    background: #ffc825;
 }
