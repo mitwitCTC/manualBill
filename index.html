@@ -236,14 +236,13 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="myDeleteForm">
+                            <form id="myDeleteForm" @submit.prevent="deleteTicket">
                                 <p>停車地點：<span>{{tempTicket.parkName}}</span></p>
                                 <p>車牌號碼：<span>{{tempTicket.plate}}</span></p>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" id="submitButton" class="btn btn-warning"
-                                        @click="deleteTicket">確認</button>
+                                    <button type="submit" id="submitButton" class="btn btn-warning" >確認</button>
                                 </div>
                             </form>
                         </div>

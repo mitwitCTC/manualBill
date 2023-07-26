@@ -73,10 +73,20 @@ createApp({
                 this.tempTicket = Object.assign({}, ticket);
                 this.tempTicket.time_limit = this.tempTicket.time_limit.split(' ')[0] + 'T' + this.tempTicket.time_limit.split(' ')[1];
             }
+            // 恢复页面滚动位置，保持提交表单前的滚动位置
+            const { scrollX, scrollY } = window;
+            setTimeout(() => {
+                window.scrollTo(scrollX, scrollY);
+            }, 0);
         },
         openDeleteTicketModal(ticket) {
             this.tempTicket = Object.assign({}, ticket);
             deleteTicketModal.show();
+            // 恢复页面滚动位置，保持提交表单前的滚动位置
+            const { scrollX, scrollY } = window;
+            setTimeout(() => {
+                window.scrollTo(scrollX, scrollY);
+            }, 0);
         },
         updateTicket() {
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
@@ -106,6 +116,11 @@ createApp({
                     })
                 ticketModal.hide();
             }
+            // 恢复页面滚动位置，保持提交表单前的滚动位置
+            const { scrollX, scrollY } = window;
+            setTimeout(() => {
+                window.scrollTo(scrollX, scrollY);
+            }, 0);
         },
         deleteTicket() {
             const deleteTicketApi = `${Api}/redeemdb/car_in_manual/deleteInfo/${this.tempTicket.id}`;
@@ -117,6 +132,11 @@ createApp({
                     this.getInfos();
                 })
             deleteTicketModal.hide();
+            // 恢复页面滚动位置，保持提交表单前的滚动位置
+            const { scrollX, scrollY } = window;
+            setTimeout(() => {
+                window.scrollTo(scrollX, scrollY);
+            }, 0);
         },
         // 搜尋
         search(searchData) {
