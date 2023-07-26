@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://17d8-39-12-128-107.ngrok-free.app'
+const Api = 'https://da0e-122-116-23-30.ngrok-free.app'
 
 
 let loginCheckData = {};
@@ -23,7 +23,6 @@ createApp({
             .post(loginApi, {target: this.user})
             .then((response) => {
                 if(response.data.returnCode == 0){
-                    console.log(response.data.data.token);
                     alert(response.data.message);
                     window.location = 'index.html';
                     sessionStorage.setItem("car_in_manual", response.data.data.token);

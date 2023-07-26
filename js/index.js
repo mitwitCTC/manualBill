@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://17d8-39-12-128-107.ngrok-free.app'
+const Api = 'https://da0e-122-116-23-30.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -17,22 +17,21 @@ createApp({
         }
     },
     methods: {
-        logOut(){
+        logOut() {
             const logOutApi = `${Api}/pdb/defUser/logOut`
             axios
-            .post(logOutApi)
-            .then((response => {
-                alert(response.data.message);
-                sessionStorage.removeItem("car_in_manual");
-                window.location = `login.html`;
-            }));
+                .post(logOutApi)
+                .then((response => {
+                    alert(response.data.message);
+                    sessionStorage.removeItem("car_in_manual");
+                    window.location = `login.html`;
+                }));
         },
         checkLogin() {
             if (sessionStorage.getItem('car_in_manual')) {
-                // const userValue =  sessionStorage.getItem('user');
                 this.getStations()
                 this.getInfos();
-            }else{
+            } else {
                 alert("請登入");
                 window.location = 'login.html'
             }
@@ -60,16 +59,19 @@ createApp({
             if (status === 'create') {
                 this.isNewTicket = true;
                 this.tempTicket = {};
-                let currentTime = new Date();
-                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
-                // console.log('this.tempTicket.time_limit', this.tempTicket.time_limit);
                 if (this.tempTicket.parkingType == "多日車") {
                     this.tempTicket.payAmount = 0;
                 }
             } else if (status === 'edit') {
+                if (this.tempTicket.arrivalTime != undefined || this.tempTicket.time_limit != undefined) {
+                    let currentTime = new Date();
+                    this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
+                    this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
+                    // this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
+                }
                 this.isNewTicket = false;
                 this.tempTicket = Object.assign({}, ticket);
-                this.tempTicket.time_limit=this.tempTicket.time_limit.split(' ')[0]+'T'+this.tempTicket.time_limit.split(' ')[1];
+                this.tempTicket.time_limit = this.tempTicket.time_limit.split(' ')[0] + 'T' + this.tempTicket.time_limit.split(' ')[1];
             }
         },
         openDeleteTicketModal(ticket) {
@@ -77,12 +79,9 @@ createApp({
             deleteTicketModal.show();
         },
         updateTicket() {
-            if (this.tempTicket.arrivalTime != undefined || this.tempTicket.time_limit != undefined) {
-                this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
-                this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
-            }
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
+                this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
                 let currentTime = new Date();
                 this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                 axios
@@ -98,6 +97,7 @@ createApp({
                 ticketModal.hide();
             } else {
                 updateTicketApi = `${Api}/redeemdb/car_in_manual/updateInfo/${this.tempTicket.id}`;
+                this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
                 axios
                     .put(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
@@ -108,11 +108,11 @@ createApp({
             }
         },
         deleteTicket() {
-            const deleteTicketApi = `${Api}/car_in_manual/deleteInfo/${this.tempTicket.id}`;
+            const deleteTicketApi = `${Api}/redeemdb/car_in_manual/deleteInfo/${this.tempTicket.id}`;
             axios
                 .patch(deleteTicketApi)
                 .then((response) => {
-                    alert(response.data.message);
+                    alert(response.data.message)
                     // console.log(response.data);
                     this.getInfos();
                 })
@@ -140,7 +140,7 @@ createApp({
             const cantFindArea = document.querySelector('.cantFind-Area');
             cantFindArea.classList.remove('block');
             document.getElementById('search').value = "";
-        },
+        }
     },
     mounted() {
         this.checkLogin();

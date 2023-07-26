@@ -92,7 +92,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="myForm" v-if="isNewTicket">
+                            <form id="myForm" v-if="isNewTicket" @submit.prevent="updateTicket">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="floatingSelect"
                                         aria-label="Floating label select example" required
@@ -147,18 +147,17 @@
 
                                 <div class="form-floating mb-3">
                                     <input type="text" class="form-control" id="floatingInput"
-                                        v-model="tempTicket.message">
+                                        v-model="tempTicket.message" required>
                                     <label for="floatingInput">請輸入備註</label>
                                 </div>
                                 <!-- <p class="text-danger">預設繳費期限為現在時間加半小時，如需調整請再行編輯</p> -->
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" id="submitButton" class="btn btn-warning"
-                                        @click="updateTicket()">確認</button>
+                                    <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
                                 </div>
                             </form>
-                            <form id="myForm" v-else>
+                            <form id="myForm" v-else @submit.prevent="updateTicket">
                                 <div class="form-floating mb-3">
                                     <select class="form-select" id="floatingSelect"
                                         aria-label="Floating label select example" required
@@ -220,8 +219,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" id="submitButton" class="btn btn-warning"
-                                        @click="updateTicket">確認</button>
+                                    <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
                                 </div>
                             </form>
                         </div>
