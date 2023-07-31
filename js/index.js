@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://da0e-122-116-23-30.ngrok-free.app'
+const Api = 'http://192.168.50.94:5010'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -18,7 +18,7 @@ createApp({
     },
     methods: {
         logOut() {
-            const logOutApi = `${Api}/pdb/defUser/logOut`
+            const logOutApi = `${Api}/redeemdb/car_in_manual/logOut`
             axios
                 .post(logOutApi)
                 .then((response => {
