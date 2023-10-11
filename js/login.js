@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'http://192.168.50.94:5010'
+const Api = 'http://219.85.163.90:5010'
 
 
 let loginCheckData = {};

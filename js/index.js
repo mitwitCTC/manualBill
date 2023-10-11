@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'http://192.168.50.94:5010'
+const Api = 'http://219.85.163.90:5010'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -64,8 +64,6 @@ createApp({
                 }
             } else if (status === 'edit') {
                 if (this.tempTicket.arrivalTime != undefined || this.tempTicket.time_limit != undefined) {
-                    let currentTime = new Date();
-                    this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
                     this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
                     // this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
                 }
@@ -92,8 +90,7 @@ createApp({
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
-                let currentTime = new Date();
-                this.tempTicket.time_limit = moment(new Date(currentTime.setMinutes(currentTime.getMinutes() + 30))).format("YYYY-MM-DD HH:mm:ss");
+                this.tempTicket.time_limit =  moment().endOf('day').format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
@@ -103,7 +100,6 @@ createApp({
                         alert(response.data.message);
                         this.getInfos();
                     })
-                // console.log(this.tempTicket);
                 ticketModal.hide();
             } else {
                 updateTicketApi = `${Api}/redeemdb/car_in_manual/updateInfo/${this.tempTicket.id}`;
