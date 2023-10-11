@@ -90,7 +90,7 @@ createApp({
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
-                this.tempTicket.time_limit =  moment().add(1,'days').format("YYYY-MM-DD HH:mm:ss");
+                this.tempTicket.time_limit =  moment().add(1,'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
