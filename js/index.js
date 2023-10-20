@@ -11,7 +11,6 @@ createApp({
             tickets: [],
             tempTicket: {},
             isNewTicket: false, // 用來確認新增或編輯場站
-            parkNames: ['應安總公司', '助安總公司', '及泰總公司'],
             stations: [],
             searchData: ''
         }
@@ -52,7 +51,19 @@ createApp({
                 .then((response) => {
                     // console.log(response.data);
                     this.tickets = response.data;
+                    this.getOrganizedInfos();
                 })
+        },
+        getOrganizedInfos() {
+            // 整合場站名稱至在場資訊列表
+            this.stations.forEach(itemA => {
+                // 查找所有匹配的項目
+                const matchingItemsB = this.tickets.filter(itemB => itemA.id === itemB.stationId);
+                // 將每个匹配的項目添加到在場資訊列表中
+                matchingItemsB.forEach(matchingItemB => {
+                    matchingItemB.name = itemA.name;
+                });
+            });
         },
         openTicketModal(status, ticket) {
             ticketModal.show();
@@ -90,7 +101,7 @@ createApp({
             let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
             if (this.isNewTicket) {
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
-                this.tempTicket.time_limit =  moment().add(1,'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
+                this.tempTicket.time_limit = moment().add(1, 'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {

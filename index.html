@@ -58,9 +58,7 @@
                             <td><img src="./img/delete.png" @click="openDeleteTicketModal(ticket)" alt="delete"
                                     style="width: 25px; cursor: pointer;" class="delete">
                             </td>
-                            <td v-if="ticket.stationId == 436">應安總公司</td>
-                            <td v-if="ticket.stationId == 437">助安總公司</td>
-                            <td v-if="ticket.stationId == 438">及泰總公司</td>
+                            <td>{{ ticket.name }}</td>
                             <td>{{ ticket.parkName }}</td>
                             <td>{{ ticket.plate }}</td>
                             <td>{{ ticket.parkingType }}</td>
