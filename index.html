@@ -16,11 +16,23 @@
         <div class="container">
             <div class="header mb-3 my-3">
                 <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
+                <form action="" class="w-50">
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="floatingSelect" aria-label="Floating label select example"
+                            required v-model="stationId" @change="getInfos">
+                            <option disabled>請選擇公司</option>
+                            <option v-for="station in stations" :value="station.id">{{
+                                station.name }}</option>
+                        </select>
+                        <label for="floatingSelect">請選擇公司</label>
+                    </div>
+                </form>
                 <div class="d-flex justify-content-between">
                     <div class="d-flex justify-content-between">
                         <form class="d-flex">
-                            <input v-model="searchData" class="form-control me-2" type="search" placeholder="輸入車牌搜尋"
-                                aria-label="Search" style="width: 150px;" @keyup.enter="search(searchdata)" id="search">
+                            <input v-model="searchData.plate" class="form-control me-2" type="search"
+                                placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;"
+                                @keyup.enter="search(searchdata)" id="search">
                             <button class="btn btn-warning text-black me-2" type="button"
                                 @click="search(searchdata)">搜尋</button>
                             <button class="btn btn-outline-warning text-black" type="submit"
@@ -51,6 +63,7 @@
                             <th class="col text-center">繳費期限</th>
                             <th class="col text-center">備註</th>
                             <th class="col text-center">修改</th>
+                            <th class="col text-center">建立人員</th>
                         </tr>
                     </thead>
                     <tbody class="fs-6">
@@ -70,6 +83,7 @@
                                 <a href="#" @click="openTicketModal('edit', ticket)"><img src="./img/edit.png"
                                         alt="edit" style="width: 25px;"></a>
                             </td>
+                            <td>{{ ticket.createUser }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -240,7 +254,7 @@
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-outline-secondary"
                                         data-bs-dismiss="modal">取消</button>
-                                    <button type="submit" id="submitButton" class="btn btn-warning" >確認</button>
+                                    <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
                                 </div>
                             </form>
                         </div>
