@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'http://219.85.163.90:5010'
+const Api = 'https://545a-122-116-23-30.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -12,46 +12,65 @@ createApp({
             tempTicket: {},
             isNewTicket: false, // 用來確認新增或編輯場站
             stations: [],
-            searchData: ''
+            searchData: {}, // 未繳費列表搜尋
+            stationId: '',
+            companyId: '',
+            userId: '',
+            user: '',
         }
     },
     methods: {
         logOut() {
-            const logOutApi = `${Api}/redeemdb/car_in_manual/logOut`
+            const logOutApi = `${Api}/redeemdb/main/logOut`
             axios
                 .post(logOutApi)
                 .then((response => {
                     alert(response.data.message);
                     sessionStorage.removeItem("car_in_manual");
+                    sessionStorage.removeItem("account");
+                    sessionStorage.removeItem("id");
+                    sessionStorage.removeItem("companyId");
                     window.location = `login.html`;
                 }));
         },
         checkLogin() {
             if (sessionStorage.getItem('car_in_manual')) {
+                this.companyId = sessionStorage.getItem('c');
+                // this.user = sessionStorage.getItem('account');
+                this.user = unescape(atob(sessionStorage.getItem('account')));
+                this.userId = sessionStorage.getItem('id')
                 this.getStations()
-                this.getInfos();
+                // this.getInfos();
             } else {
                 alert("請登入");
                 window.location = 'login.html'
             }
         },
+        // 取場站列表
         getStations() {
-            const getStationsApi = `${Api}/redeemdb/car_in_manual/staionId`;
+            const getStationsApi = `${Api}/redeemdb/main/staionId`;
             axios
-                .get(getStationsApi)
+                .post(getStationsApi, { target: { companyId: this.companyId } })
                 .then((response) => {
-                    // console.log(response.data);
                     this.stations = response.data;
+                    this.stationId = response.data[0].id // 預設為第一個場站
+                    this.getInfos();
                 })
         },
+        // 取個別未繳費資訊
         getInfos() {
-            const getInfosApi = `${Api}/redeemdb/car_in_manual/Info`;
+            const getInfosApi = `${Api}/redeemdb/main/Info`;
+            const cantFindArea = document.querySelector('.cantFind-Area');
             axios
-                .get(getInfosApi)
+                .post(getInfosApi, { target: { stationId: this.stationId } })
                 .then((response) => {
-                    // console.log(response.data);
                     this.tickets = response.data;
-                    this.getOrganizedInfos();
+                    if (this.tickets.length > 0 ) {
+                        this.getOrganizedInfos();
+                        cantFindArea.classList.remove('block');
+                    } else {
+                        cantFindArea.classList.add('block');
+                    }
                 })
         },
         getOrganizedInfos() {
@@ -98,10 +117,11 @@ createApp({
             }, 0);
         },
         updateTicket() {
-            let updateTicketApi = `${Api}/redeemdb/car_in_manual/createInfo`
+            let updateTicketApi = `${Api}/redeemdb/main/createInfo`
             if (this.isNewTicket) {
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
                 this.tempTicket.time_limit = moment().add(1, 'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
+                this.tempTicket.createUser = this.user;
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
@@ -113,7 +133,7 @@ createApp({
                     })
                 ticketModal.hide();
             } else {
-                updateTicketApi = `${Api}/redeemdb/car_in_manual/updateInfo/${this.tempTicket.id}`;
+                updateTicketApi = `${Api}/redeemdb/main/updateInfo/${this.tempTicket.id}`;
                 this.tempTicket.time_limit = this.tempTicket.time_limit.split('T')[0] + ' ' + this.tempTicket.time_limit.split('T')[1];
                 axios
                     .put(updateTicketApi, { target: this.tempTicket })
@@ -130,9 +150,9 @@ createApp({
             }, 0);
         },
         deleteTicket() {
-            const deleteTicketApi = `${Api}/redeemdb/car_in_manual/deleteInfo/${this.tempTicket.id}`;
+            const deleteTicketApi = `${Api}/redeemdb/main/deleteInfo/${this.tempTicket.id}`;
             axios
-                .patch(deleteTicketApi)
+                .patch(deleteTicketApi, { target: { deleteUser: this.user } })
                 .then((response) => {
                     alert(response.data.message)
                     // console.log(response.data);
@@ -147,19 +167,25 @@ createApp({
         },
         // 搜尋
         search(searchData) {
-            const searchDataApi = `${Api}/redeemdb/car_in_manual/searchInfo`;
+            const searchDataApi = `${Api}/redeemdb/main/searchInfo`;
             const cantFindArea = document.querySelector('.cantFind-Area');
-            axios
-                .post(searchDataApi, { target: { plate: this.searchData } })
-                .then((response) => {
-                    // console.log(response.data.data);
-                    this.tickets = response.data.data;
-                    // console.log("this.tickets", this.tickets);
-                    // console.log(this.tickets.length);
-                    this.tickets.length > 0
-                        ? cantFindArea.classList.remove('block')
-                        : cantFindArea.classList.add('block');
-                })
+            this.searchData.stationId = this.stationId;
+            if (this.searchData.plate == '') {
+                alert('請輸入車牌號碼搜尋')
+            } else {
+                axios
+                    .post(searchDataApi, { target: this.searchData })
+                    .then((response) => {
+                        this.tickets = response.data.data;
+                        if (response.data.message == '查詢成功') {
+                            this.getOrganizedInfos();
+                            cantFindArea.classList.remove('block');
+                        } else if (response.data.message == '查無車號') {
+                            cantFindArea.classList.add('block');
+                        }
+                    })
+            }
+
         },
         // 清除搜尋
         clearSearch() {
