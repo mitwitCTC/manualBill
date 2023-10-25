@@ -1,6 +1,6 @@
 import { createApp } from 'https://unpkg.com/vue@3/dist/vue.esm-browser.js';
 
-const Api = 'https://545a-122-116-23-30.ngrok-free.app'
+const Api = 'https://0931-122-116-23-30.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
@@ -17,6 +17,8 @@ createApp({
             companyId: '',
             userId: '',
             user: '',
+            paidSearchData: {}, // 繳費紀錄搜尋區間
+            paidTickets: [], // 繳費紀錄列表
         }
     },
     methods: {
@@ -65,7 +67,7 @@ createApp({
                 .post(getInfosApi, { target: { stationId: this.stationId } })
                 .then((response) => {
                     this.tickets = response.data;
-                    if (this.tickets.length > 0 ) {
+                    if (this.tickets.length > 0) {
                         this.getOrganizedInfos();
                         cantFindArea.classList.remove('block');
                     } else {
@@ -193,6 +195,18 @@ createApp({
             const cantFindArea = document.querySelector('.cantFind-Area');
             cantFindArea.classList.remove('block');
             document.getElementById('search').value = "";
+        },
+        // 繳費紀錄搜尋
+        paidSearch() {
+            this.paidSearchData.stationId = this.stationId;
+            const paidSearchApi = `${Api}/redeemdb/main/searchTransaction`;
+            console.log(this.paidSearchData);
+            axios
+                .post(paidSearchApi, { target: this.paidSearchData })
+                .then((response) => {
+                    console.log(response);
+                    this.paidTickets = response.data;
+                })
         }
     },
     mounted() {
