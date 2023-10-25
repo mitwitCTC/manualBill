@@ -200,11 +200,9 @@ createApp({
         paidSearch() {
             this.paidSearchData.stationId = this.stationId;
             const paidSearchApi = `${Api}/redeemdb/main/searchTransaction`;
-            console.log(this.paidSearchData);
             axios
                 .post(paidSearchApi, { target: this.paidSearchData })
                 .then((response) => {
-                    console.log(response);
                     this.paidTickets = response.data;
                 })
         }
