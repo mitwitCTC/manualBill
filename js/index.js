@@ -215,7 +215,7 @@ createApp({
             } else if (this.paidSearchData.startDate > this.paidSearchData.endDate) {
                 alert('選擇區間有誤，請重新選擇');
                 this.isLoading = false;
-            } else if (this.paidSearchData.startDate < this.paidSearchData.endDate) {
+            } else {
                 axios
                     .post(paidSearchApi, { target: this.paidSearchData })
                     .then((response) => {
