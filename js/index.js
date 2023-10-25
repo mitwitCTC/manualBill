@@ -4,10 +4,13 @@ const Api = 'https://0931-122-116-23-30.ngrok-free.app'
 
 let ticketModal = null;
 let deleteTicketModal = null;
+let changePasswordModal = null;
 
 createApp({
     data() {
         return {
+            password: '',
+            checkPassword: '',
             isLoading: false,
             tickets: [],
             tempTicket: {},
@@ -23,6 +26,26 @@ createApp({
         }
     },
     methods: {
+        openChangePasswordModal() {
+            changePasswordModal.show();
+        },
+        changePassword() {
+            const changePasswordApi = `${Api}/redeemdb/main/updatePassword/${this.userId}`;
+            if (this.password !== this.checkPassword) {
+                alert('兩次密碼不相符，請再次確認')
+            } else {
+                axios
+                    .put(changePasswordApi, { target: { password: this.password } })
+                    .then((response) => {
+                        if (response.data.message == '修改成功') {
+                            changePasswordModal.hide();
+                            this.password = '';
+                            alert("修改成功～請重新登入");
+                            this.logOut();
+                        }
+                    })
+            }
+        },
         logOut() {
             const logOutApi = `${Api}/redeemdb/main/logOut`
             axios
@@ -236,5 +259,6 @@ createApp({
         // this.getInfos();
         ticketModal = new bootstrap.Modal('#ticketModal');
         deleteTicketModal = new bootstrap.Modal('#deleteTicketModal');
+        changePasswordModal = new bootstrap.Modal('#changePasswordModal');
     }
 }).mount('#app')
