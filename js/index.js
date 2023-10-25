@@ -151,6 +151,7 @@ createApp({
                 this.tempTicket.arrivalTime = this.tempTicket.arrivalTime.split('T')[0] + ' ' + this.tempTicket.arrivalTime.split('T')[1];
                 this.tempTicket.time_limit = moment().add(1, 'days').endOf('day').format("YYYY-MM-DD HH:mm:ss");
                 this.tempTicket.createUser = this.user;
+                this.tempTicket.companyId = this.companyId;
                 axios
                     .post(updateTicketApi, { target: this.tempTicket })
                     .then((response) => {
