@@ -29,11 +29,50 @@
             <div class="tab-content" id="nav-tabContent">
                 <!-- unpaid-list -->
                 <div class="tab-pane fade show active" id="nav-unpaid" role="tabpanel" aria-labelledby="nav-unpaid-tab">
-                    <div class="mb-3 my-3">
-                        <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
+                    <div class="unpaid-md">
+                        <div class="mb-3 my-3">
+                            <form class="d-flex justify-content-between align-items-center">
+                                <div class="w-25 form-floating mb-3">
+                                    <select class="form-select" id="floatingSelect"
+                                        aria-label="Floating label select example" required v-model="stationId"
+                                        @change="getInfos">
+                                        <option disabled>請選擇公司</option>
+                                        <option v-for="station in stations" :value="station.id">{{
+                                            station.name }}</option>
+                                    </select>
+                                    <label for="floatingSelect">請選擇公司</label>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-warning text-black me-2"
+                                        @click="openChangePasswordModal">修改密碼</button>
+                                    <button type="button" class="btn btn-outline-warning text-black"
+                                        @click="logOut">登出</button>
+                                </div>
+                            </form>
+                            <div class="d-flex justify-content-between">
+                                <div class="d-flex justify-content-between">
+                                    <form class="d-flex">
+                                        <input v-model="searchData.plate" class="form-control me-2" type="search"
+                                            placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;"
+                                            @keyup.enter="search(searchdata)" id="search">
+                                        <button class="btn btn-warning text-black me-2" type="button"
+                                            @click="search(searchdata)">搜尋</button>
+                                        <button class="btn btn-outline-warning text-black" type="submit"
+                                            @click="clearSearch">清除搜尋結果</button>
+                                    </form>
+                                    <button type="button" class="btn btn-warning mx-5"
+                                        @click="openTicketModal('create')" data-bs-target="#ticketModal">
+                                        新增
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="unpaid-sm">
                         <form class="d-flex justify-content-between align-items-center">
-                            <div class="w-25 form-floating mb-3">
-                                <select class="form-select" id="floatingSelect"
+                            <div class="w-50 form-floating mb-3">
+                                <select class="form-select" id="unpaidStationId-search"
                                     aria-label="Floating label select example" required v-model="stationId"
                                     @change="getInfos">
                                     <option disabled>請選擇公司</option>
@@ -49,32 +88,37 @@
                                     @click="logOut">登出</button>
                             </div>
                         </form>
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex justify-content-between">
-                                <form class="d-flex">
-                                    <input v-model="searchData.plate" class="form-control me-2" type="search"
-                                        placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;"
-                                        @keyup.enter="search(searchdata)" id="search">
+
+                        <form>
+                            <input v-model="searchData.plate" class="form-control me-2" type="search"
+                                placeholder="輸入車牌搜尋" aria-label="Search" @keydown.enter="search(searchdata)"
+                                id="unpaid-search">
+                            <div class="d-flex justify-content-between my-2">
+                                <div>
                                     <button class="btn btn-warning text-black me-2" type="button"
                                         @click="search(searchdata)">搜尋</button>
                                     <button class="btn btn-outline-warning text-black" type="submit"
                                         @click="clearSearch">清除搜尋結果</button>
-                                </form>
-                                <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')"
+                                </div>
+                                <button type="button" class="btn btn-warning" @click="openTicketModal('create')"
                                     data-bs-target="#ticketModal">
                                     新增
                                 </button>
                             </div>
+                        </form>
 
-                        </div>
                     </div>
                     <div v-if="isLoading" class="d-flex justify-content-center">
                         <img src="./img/loading.svg" alt="loading">
                     </div>
+                    <!-- 查無資料 -->
+                    <div class="cantFind-Area">
+                        <h3>查無相關資料，請重新輸入</h3>
+                    </div>
                     <div v-if="!isLoading" class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
-                                <tr class="tt col fs-5 text-center bg-warning">
+                                <tr class="col text-center bg-warning sticky-top">
                                     <th class="col text-center"></th>
                                     <th class="col text-center">業者</th>
                                     <th class="col text-center">停車地點</th>
@@ -109,11 +153,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- 查無用戶車籍資料 -->
-                    <div class="cantFind-Area">
-                        <h3>查無相關資料，請重新輸入</h3>
                     </div>
 
                     <!-- 開票/編輯 modal -->
@@ -290,10 +329,36 @@
                 </div>
                 <!-- paid-detail -->
                 <div class="tab-pane fade show" id="nav-paid" role="tabpanel" aria-labelledby="nav-paid-tab">
-                    <div class="d-flex justify-content-around mb-2 align-items-center">
-                        <form class="w-50">
+                    <div class="paid-md">
+                        <div class="d-flex justify-content-around mb-2 align-items-center">
+                            <form class="w-50">
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="paidStationId"
+                                        aria-label="Floating label select example" required
+                                        v-model="paidSearchData.stationId">
+                                        <option disabled>請選擇公司</option>
+                                        <option v-for="station in stations" :value="station.id">{{ station.name }}
+                                        </option>
+                                    </select>
+                                    <label for="floatingSelect">請選擇公司</label>
+                                </div>
+                            </form>
+                            <section>
+                                <input type="date" class="pe-3 me-2" v-model="paidSearchData.startDate">
+                                <input type="date" class="pe-3 me-2" v-model="paidSearchData.endDate">
+                            </section>
+                            <button type="submit" class="btn btn-warning ms-3" @click="paidSearch(paidSearchData)">
+                                搜尋
+                            </button>
+                            <button type="button" class="btn btn-warning text-black me-2"
+                                @click="openChangePasswordModal">修改密碼</button>
+                            <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
+                        </div>
+                    </div>
+                    <div class="paid-sm">
+                        <form>
                             <div class="form-floating mb-3">
-                                <select class="form-select" id="paidStationId"
+                                <select class="form-select" id="paidStationId-sm"
                                     aria-label="Floating label select example" required
                                     v-model="paidSearchData.stationId">
                                     <option disabled>請選擇公司</option>
@@ -303,34 +368,44 @@
                                 <label for="floatingSelect">請選擇公司</label>
                             </div>
                         </form>
-                        <section>
+                        <section class="d-flex justify-content-between">
                             <input type="date" class="pe-3 me-2" v-model="paidSearchData.startDate">
                             <input type="date" class="pe-3 me-2" v-model="paidSearchData.endDate">
                         </section>
-                        <button type="submit" class="btn btn-warning ms-3" @click="paidSearch(paidSearchData)">
-                            搜尋
-                        </button>
-                        <button type="button" class="btn btn-warning text-black me-2" @click="openChangePasswordModal">修改密碼</button>
-                        <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="submit" class="btn btn-warning my-2 me-2" @click="paidSearch(paidSearchData)">
+                                搜尋
+                            </button>
+                            <div>
+                                <button type="button" class="btn btn-warning text-black me-2"
+                                    @click="openChangePasswordModal">修改密碼</button>
+                                <button type="button" class="btn btn-outline-warning text-black"
+                                    @click="logOut">登出</button>
+                            </div>
+                        </div>
                     </div>
                     <div v-if="isLoading" class="d-flex justify-content-center">
                         <img src="./img/loading.svg" alt="loading">
                     </div>
+                    <!-- 查無資料 -->
+                    <div class="cantFind-Area" id="cantFind-Area">
+                        <h3>查無相關資料，請重新輸入</h3>
+                    </div>
                     <div v-if="!isLoading" class="table-responsive">
                         <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr class="tt col fs-5 text-center bg-warning">
+                            <thead class="sticky-top">
+                                <tr class="tt col text-center bg-warning">
                                     <th class="col text-center">交易 ID</th>
-                                    <th class="col text-center" style="width: 6%;">車號</th>
+                                    <th class="col text-center">車號</th>
                                     <th class="col text-center">電話</th>
                                     <th class="col text-center">入場時間</th>
                                     <th class="col text-center">交易時間</th>
-                                    <th class="col text-center" style="width: 4%;">交易金額</th>
-                                    <th class="col text-center" style="width: 8%;">交易狀態</th>
-                                    <th class="col text-center" style="width: 8%;">交易類型</th>
+                                    <th class="col text-center">交易金額</th>
+                                    <th class="col text-center">交易狀態</th>
+                                    <th class="col text-center">交易類型</th>
                                     <th class="col text-center">支付交易代號</th>
                                     <th class="col text-center">發票號碼</th>
-                                    <th class="col text-center" style="width: 10%;">發票日期</th>
+                                    <th class="col text-center">發票日期</th>
                                     <th class="col text-center">退款原因</th>
                                 </tr>
                             </thead>
@@ -351,10 +426,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <!-- 查無用戶車籍資料 -->
-                    <div class="cantFind-Area" id="cantFind-Area">
-                        <h3>查無相關資料，請重新輸入</h3>
                     </div>
                 </div>
 
