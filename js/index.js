@@ -229,7 +229,6 @@ createApp({
         // 繳費紀錄搜尋
         paidSearch() {
             this.isLoading = true;
-            this.paidSearchData.stationId = this.stationId;
             const paidSearchApi = `${Api}/redeemdb/main/searchTransaction`;
             const cantFindPaidArea = document.querySelector('#cantFind-Area');
             if (this.paidSearchData.startDate == undefined || this.paidSearchData.endDate == undefined) {
