@@ -8,6 +8,7 @@ let deleteTicketModal = null;
 createApp({
     data() {
         return {
+            isLoading: false,
             tickets: [],
             tempTicket: {},
             isNewTicket: false, // 用來確認新增或編輯場站
@@ -56,11 +57,13 @@ createApp({
                 .then((response) => {
                     this.stations = response.data;
                     this.stationId = response.data[0].id // 預設為第一個場站
+                    this.paidSearchData.stationId = response.data[0].id // 繳費紀錄頁預設為第一個場站
                     this.getInfos();
                 })
         },
         // 取個別未繳費資訊
         getInfos() {
+            this.isLoading = true;
             const getInfosApi = `${Api}/redeemdb/main/Info`;
             const cantFindArea = document.querySelector('.cantFind-Area');
             axios
@@ -73,6 +76,7 @@ createApp({
                     } else {
                         cantFindArea.classList.add('block');
                     }
+                    this.isLoading = false;
                 })
         },
         getOrganizedInfos() {
@@ -169,8 +173,10 @@ createApp({
         },
         // 搜尋
         search(searchData) {
+            this.isLoading = true;
             const searchDataApi = `${Api}/redeemdb/main/searchInfo`;
             const cantFindArea = document.querySelector('.cantFind-Area');
+            cantFindArea.classList.remove('block');
             this.searchData.stationId = this.stationId;
             if (this.searchData.plate == '') {
                 alert('請輸入車牌號碼搜尋')
@@ -185,6 +191,7 @@ createApp({
                         } else if (response.data.message == '查無車號') {
                             cantFindArea.classList.add('block');
                         }
+                        this.isLoading = false;
                     })
             }
 
@@ -198,13 +205,29 @@ createApp({
         },
         // 繳費紀錄搜尋
         paidSearch() {
+            this.isLoading = true;
             this.paidSearchData.stationId = this.stationId;
             const paidSearchApi = `${Api}/redeemdb/main/searchTransaction`;
-            axios
-                .post(paidSearchApi, { target: this.paidSearchData })
-                .then((response) => {
-                    this.paidTickets = response.data;
-                })
+            const cantFindPaidArea = document.querySelector('#cantFind-Area');
+            if (this.paidSearchData.startDate == undefined || this.paidSearchData.endDate == undefined) {
+                alert('日期不得為空');
+                this.isLoading = false;
+            } else if (this.paidSearchData.startDate > this.paidSearchData.endDate) {
+                alert('選擇區間有誤，請重新選擇');
+                this.isLoading = false;
+            } else if (this.paidSearchData.startDate < this.paidSearchData.endDate) {
+                axios
+                    .post(paidSearchApi, { target: this.paidSearchData })
+                    .then((response) => {
+                        this.paidTickets = response.data;
+                        if (this.paidTickets.length == 0) {
+                            cantFindPaidArea.classList.add('block');
+                        } else if (this.paidTickets.length > 0) {
+                            cantFindPaidArea.classList.remove('block');
+                        }
+                        this.isLoading = false;
+                    })
+            }
         }
     },
     mounted() {

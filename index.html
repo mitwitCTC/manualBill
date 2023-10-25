@@ -25,327 +25,329 @@
                     </div>
                 </nav>
             </div>
-            <div>
-                <div class="tab-content" id="nav-tabContent">
-                    <!-- unpaid-list -->
-                    <div class="tab-pane fade show active" id="nav-unpaid" role="tabpanel"
-                        aria-labelledby="nav-unpaid-tab">
-                        <div class="mb-3 my-3">
-                            <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
-                            <form action="" class="w-50">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect"
-                                        aria-label="Floating label select example" required v-model="stationId"
-                                        @change="getInfos">
-                                        <option disabled>請選擇公司</option>
-                                        <option v-for="station in stations" :value="station.id">{{
-                                            station.name }}</option>
-                                    </select>
-                                    <label for="floatingSelect">請選擇公司</label>
-                                </div>
-                            </form>
-                            <div class="d-flex justify-content-between">
-                                <div class="d-flex justify-content-between">
-                                    <form class="d-flex">
-                                        <input v-model="searchData.plate" class="form-control me-2" type="search"
-                                            placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;"
-                                            @keyup.enter="search(searchdata)" id="search">
-                                        <button class="btn btn-warning text-black me-2" type="button"
-                                            @click="search(searchdata)">搜尋</button>
-                                        <button class="btn btn-outline-warning text-black" type="submit"
-                                            @click="clearSearch">清除搜尋結果</button>
-                                    </form>
-                                    <button type="button" class="btn btn-warning mx-5"
-                                        @click="openTicketModal('create')" data-bs-target="#ticketModal">
-                                        新增
-                                    </button>
-                                </div>
-                                <button type="button" class="btn btn-outline-warning text-black"
-                                    @click="logOut">登出</button>
+
+            <div class="tab-content" id="nav-tabContent">
+                <!-- unpaid-list -->
+                <div class="tab-pane fade show active" id="nav-unpaid" role="tabpanel" aria-labelledby="nav-unpaid-tab">
+                    <div class="mb-3 my-3">
+                        <!-- <h1 class="d-flex justify-content-center my-3">人工開票</h1> -->
+                        <form action="" class="w-50">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="floatingSelect"
+                                    aria-label="Floating label select example" required v-model="stationId"
+                                    @change="getInfos">
+                                    <option disabled>請選擇公司</option>
+                                    <option v-for="station in stations" :value="station.id">{{
+                                        station.name }}</option>
+                                </select>
+                                <label for="floatingSelect">請選擇公司</label>
                             </div>
+                        </form>
+                        <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between">
+                                <form class="d-flex">
+                                    <input v-model="searchData.plate" class="form-control me-2" type="search"
+                                        placeholder="輸入車牌搜尋" aria-label="Search" style="width: 150px;"
+                                        @keyup.enter="search(searchdata)" id="search">
+                                    <button class="btn btn-warning text-black me-2" type="button"
+                                        @click="search(searchdata)">搜尋</button>
+                                    <button class="btn btn-outline-warning text-black" type="submit"
+                                        @click="clearSearch">清除搜尋結果</button>
+                                </form>
+                                <button type="button" class="btn btn-warning mx-5" @click="openTicketModal('create')"
+                                    data-bs-target="#ticketModal">
+                                    新增
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
                         </div>
+                    </div>
+                    <div v-if="isLoading" class="d-flex justify-content-center">
+                        <img src="./img/loading.svg" alt="loading">
+                    </div>
+                    <div v-if="!isLoading" class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr class="tt col fs-5 text-center bg-warning">
+                                    <th class="col text-center"></th>
+                                    <th class="col text-center">業者</th>
+                                    <th class="col text-center">停車地點</th>
+                                    <th class="col text-center">車牌號</th>
+                                    <th class="col text-center">停車種類</th>
+                                    <th class="col text-center">入場時間</th>
+                                    <th class="col text-center">金額</th>
+                                    <th class="col text-center">繳費期限</th>
+                                    <th class="col text-center">備註</th>
+                                    <th class="col text-center">修改</th>
+                                    <th class="col text-center">建立人員</th>
+                                </tr>
+                            </thead>
+                            <tbody class="fs-6">
+                                <tr v-for="(ticket, id) in tickets" :key="ticket.id" class="text-center">
+                                    <td><img src="./img/delete.png" @click="openDeleteTicketModal(ticket)" alt="delete"
+                                            style="width: 25px; cursor: pointer;" class="delete">
+                                    </td>
+                                    <td>{{ ticket.name }}</td>
+                                    <td>{{ ticket.parkName }}</td>
+                                    <td>{{ ticket.plate }}</td>
+                                    <td>{{ ticket.parkingType }}</td>
+                                    <td>{{ ticket.arrivalTime }}</td>
+                                    <td>{{ ticket.payAmount }}</td>
+                                    <td>{{ ticket.time_limit }}</td>
+                                    <td>{{ ticket.message }}</td>
+                                    <td class="d-flex justify-content-around">
+                                        <a href="#" @click="openTicketModal('edit', ticket)"><img src="./img/edit.png"
+                                                alt="edit" style="width: 25px;"></a>
+                                    </td>
+                                    <td>{{ ticket.createUser }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr class="tt col fs-5 text-center bg-warning">
-                                        <th class="col text-center"></th>
-                                        <th class="col text-center">業者</th>
-                                        <th class="col text-center">停車地點</th>
-                                        <th class="col text-center">車牌號</th>
-                                        <th class="col text-center">停車種類</th>
-                                        <th class="col text-center">入場時間</th>
-                                        <th class="col text-center">金額</th>
-                                        <th class="col text-center">繳費期限</th>
-                                        <th class="col text-center">備註</th>
-                                        <th class="col text-center">修改</th>
-                                        <th class="col text-center">建立人員</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-6">
-                                    <tr v-for="(ticket, id) in tickets" :key="ticket.id" class="text-center">
-                                        <td><img src="./img/delete.png" @click="openDeleteTicketModal(ticket)"
-                                                alt="delete" style="width: 25px; cursor: pointer;" class="delete">
-                                        </td>
-                                        <td>{{ ticket.name }}</td>
-                                        <td>{{ ticket.parkName }}</td>
-                                        <td>{{ ticket.plate }}</td>
-                                        <td>{{ ticket.parkingType }}</td>
-                                        <td>{{ ticket.arrivalTime }}</td>
-                                        <td>{{ ticket.payAmount }}</td>
-                                        <td>{{ ticket.time_limit }}</td>
-                                        <td>{{ ticket.message }}</td>
-                                        <td class="d-flex justify-content-around">
-                                            <a href="#" @click="openTicketModal('edit', ticket)"><img
-                                                    src="./img/edit.png" alt="edit" style="width: 25px;"></a>
-                                        </td>
-                                        <td>{{ ticket.createUser }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    <!-- 查無用戶車籍資料 -->
+                    <div class="cantFind-Area">
+                        <h3>查無相關資料，請重新輸入</h3>
+                    </div>
 
-                        <!-- 查無用戶車籍資料 -->
-                        <div class="cantFind-Area">
-                            <h3>查無相關資料，請重新輸入</h3>
-                        </div>
+                    <!-- 開票/編輯 modal -->
+                    <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel"
+                        aria-hidden="true" data-bs-backdrop="static">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h5 class="modal-title" id="ticketModalLabel">{{ isNewTicket ? '開票' : '編輯開單資訊'}}
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="myForm" v-if="isNewTicket" @submit.prevent="updateTicket">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="floatingSelect"
+                                                aria-label="Floating label select example" required
+                                                v-model="tempTicket.stationId">
+                                                <option disabled>請選擇公司</option>
+                                                <option v-for="station in stations" :value="station.id">{{
+                                                    station.name }}</option>
+                                            </select>
+                                            <label for="floatingSelect">請選擇公司</label>
+                                        </div>
 
-                        <!-- 開票/編輯 modal -->
-                        <div class="modal fade" id="ticketModal" tabindex="-1" aria-labelledby="ticketModalLabel"
-                            aria-hidden="true" data-bs-backdrop="static">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-warning">
-                                        <h5 class="modal-title" id="ticketModalLabel">{{ isNewTicket ? '開票' : '編輯開單資訊'}}
-                                        </h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="myForm" v-if="isNewTicket" @submit.prevent="updateTicket">
-                                            <div class="form-floating mb-3">
-                                                <select class="form-select" id="floatingSelect"
-                                                    aria-label="Floating label select example" required
-                                                    v-model="tempTicket.stationId">
-                                                    <option disabled>請選擇公司</option>
-                                                    <option v-for="station in stations" :value="station.id">{{
-                                                        station.name }}</option>
-                                                </select>
-                                                <label for="floatingSelect">請選擇公司</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.parkName" required>
+                                            <label for="floatingInput">請輸入場站名稱</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.parkName" required>
-                                                <label for="floatingInput">請輸入場站名稱</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.plate" required>
+                                            <label for="floatingInput">請輸入車號</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.plate" required>
-                                                <label for="floatingInput">請輸入車號</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="floatingSelect"
+                                                aria-label="Floating label select example" required
+                                                v-model="tempTicket.parkingType">
+                                                <option disabled>請選擇停車種類</option>
+                                                <option>臨停</option>
+                                                <option>多日車</option>
+                                            </select>
+                                            <label for="floatingSelect">請選擇停車種類</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <select class="form-select" id="floatingSelect"
-                                                    aria-label="Floating label select example" required
-                                                    v-model="tempTicket.parkingType">
-                                                    <option disabled>請選擇停車種類</option>
-                                                    <option>臨停</option>
-                                                    <option>多日車</option>
-                                                </select>
-                                                <label for="floatingSelect">請選擇停車種類</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="datetime-local" class="form-control" id="floatingInput"
+                                                step="1" v-model="tempTicket.arrivalTime" required>
+                                            <label for="floatingInput">請輸入入場時間</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="datetime-local" class="form-control" id="floatingInput"
-                                                    step="1" v-model="tempTicket.arrivalTime" required>
-                                                <label for="floatingInput">請輸入入場時間</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input v-if="tempTicket.parkingType != '多日車'" type="number"
+                                                class="form-control" id="floatingInput" v-model="tempTicket.payAmount"
+                                                required>
+                                            <label for="floatingInput">請輸入金額</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input v-if="tempTicket.parkingType != '多日車'" type="number"
-                                                    class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.payAmount" required>
-                                                <label for="floatingInput">請輸入金額</label>
-                                            </div>
-
-                                            <!-- <div class="form-floating mb-3">
+                                        <!-- <div class="form-floating mb-3">
                                     <input type="datetime-local" class="form-control" id="floatingInput" step="1"
                                         v-model="tempTicket.time_limit" required>
                                     <label for="floatingInput">請輸入繳費期限</label>
                                 </div> -->
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.message">
-                                                <label for="floatingInput">請輸入備註</label>
-                                            </div>
-                                            <!-- <p class="text-danger">預設繳費期限為現在時間加半小時，如需調整請再行編輯</p> -->
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    data-bs-dismiss="modal">取消</button>
-                                                <button type="submit" id="submitButton"
-                                                    class="btn btn-warning">確認</button>
-                                            </div>
-                                        </form>
-                                        <form id="myForm" v-else @submit.prevent="updateTicket">
-                                            <div class="form-floating mb-3">
-                                                <select class="form-select" id="floatingSelect"
-                                                    aria-label="Floating label select example" required
-                                                    v-model="tempTicket.stationId" disabled>
-                                                    <option disabled>請選擇公司</option>
-                                                    <option v-for="station in stations" :value="station.id">{{
-                                                        station.name }}</option>
-                                                </select>
-                                                <label for="floatingSelect">請選擇公司</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.message">
+                                            <label for="floatingInput">請輸入備註</label>
+                                        </div>
+                                        <!-- <p class="text-danger">預設繳費期限為現在時間加半小時，如需調整請再行編輯</p> -->
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
+                                        </div>
+                                    </form>
+                                    <form id="myForm" v-else @submit.prevent="updateTicket">
+                                        <div class="form-floating mb-3">
+                                            <select class="form-select" id="floatingSelect"
+                                                aria-label="Floating label select example" required
+                                                v-model="tempTicket.stationId" disabled>
+                                                <option disabled>請選擇公司</option>
+                                                <option v-for="station in stations" :value="station.id">{{
+                                                    station.name }}</option>
+                                            </select>
+                                            <label for="floatingSelect">請選擇公司</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.parkName" required disabled>
-                                                <label for="floatingInput">請輸入場站名稱</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.parkName" required disabled>
+                                            <label for="floatingInput">請輸入場站名稱</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.plate" required disabled>
-                                                <label for="floatingInput">請輸入車號</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.plate" required disabled>
+                                            <label for="floatingInput">請輸入車號</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <select disabled class="form-select" id="floatingSelect"
-                                                    aria-label="Floating label select example" required
-                                                    v-model="tempTicket.parkingType">
-                                                    <option disabled>請選擇停車種類</option>
-                                                    <option>臨停</option>
-                                                    <option>多日車</option>
-                                                </select>
-                                                <label for="floatingSelect">請選擇停車種類</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <select disabled class="form-select" id="floatingSelect"
+                                                aria-label="Floating label select example" required
+                                                v-model="tempTicket.parkingType">
+                                                <option disabled>請選擇停車種類</option>
+                                                <option>臨停</option>
+                                                <option>多日車</option>
+                                            </select>
+                                            <label for="floatingSelect">請選擇停車種類</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input disabled type="datetime-local" class="form-control"
-                                                    id="floatingInput" step="1" v-model="tempTicket.arrivalTime"
-                                                    required>
-                                                <label for="floatingInput">請輸入入場時間</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input disabled type="datetime-local" class="form-control"
+                                                id="floatingInput" step="1" v-model="tempTicket.arrivalTime" required>
+                                            <label for="floatingInput">請輸入入場時間</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="number" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.payAmount" required>
-                                                <label for="floatingInput">請輸入金額</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="number" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.payAmount" required>
+                                            <label for="floatingInput">請輸入金額</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="datetime-local" class="form-control" id="floatingInput"
-                                                    step="1" v-model="tempTicket.time_limit" required>
-                                                <label for="floatingInput">請輸入繳費期限</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="datetime-local" class="form-control" id="floatingInput"
+                                                step="1" v-model="tempTicket.time_limit" required>
+                                            <label for="floatingInput">請輸入繳費期限</label>
+                                        </div>
 
-                                            <div class="form-floating mb-3">
-                                                <input type="text" class="form-control" id="floatingInput"
-                                                    v-model="tempTicket.message">
-                                                <label for="floatingInput">請輸入備註</label>
-                                            </div>
+                                        <div class="form-floating mb-3">
+                                            <input type="text" class="form-control" id="floatingInput"
+                                                v-model="tempTicket.message">
+                                            <label for="floatingInput">請輸入備註</label>
+                                        </div>
 
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    data-bs-dismiss="modal">取消</button>
-                                                <button type="submit" id="submitButton"
-                                                    class="btn btn-warning">確認</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 刪除 modal -->
-                        <div class="modal fade" id="deleteTicketModal" tabindex="-1"
-                            aria-labelledby="deleteTicketModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header bg-warning">
-                                        <h5 class="modal-title" id="deleteTicketModalLabel">請確認刪除資訊</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form id="myDeleteForm" @submit.prevent="deleteTicket">
-                                            <p>停車地點：<span>{{tempTicket.parkName}}</span></p>
-                                            <p>車牌號碼：<span>{{tempTicket.plate}}</span></p>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline-secondary"
-                                                    data-bs-dismiss="modal">取消</button>
-                                                <button type="submit" id="submitButton"
-                                                    class="btn btn-warning">確認</button>
-                                            </div>
-                                        </form>
-                                    </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- paid-detail -->
-                    <div class="tab-pane fade show" id="nav-paid" role="tabpanel" aria-labelledby="nav-paid-tab">
-                        <div class="d-flex justify-content-around mb-2 align-items-center">
-                            <form class="w-50">
-                                <div class="form-floating mb-3">
-                                    <select class="form-select" id="floatingSelect"
-                                        aria-label="Floating label select example" required
-                                        v-model="paidSearchData.stationId">
-                                        <option disabled>請選擇公司</option>
-                                        <option v-for="station in stations" :value="station.id">{{ station.name }}
-                                        </option>
-                                    </select>
-                                    <label for="floatingSelect">請選擇公司</label>
+                    <!-- 刪除 modal -->
+                    <div class="modal fade" id="deleteTicketModal" tabindex="-1"
+                        aria-labelledby="deleteTicketModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header bg-warning">
+                                    <h5 class="modal-title" id="deleteTicketModalLabel">請確認刪除資訊</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
-                            </form>
-                            <section>
-                                <input type="date" class="pe-3 me-2" v-model="paidSearchData.startDate">
-                                <input type="date" class="pe-3 me-2" v-model="paidSearchData.endDate">
-                            </section>
-                            <button type="submit" class="btn btn-warning ms-3" @click="paidSearch(paidSearchData)">
-                                搜尋
-                            </button>
-                            <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
+                                <div class="modal-body">
+                                    <form id="myDeleteForm" @submit.prevent="deleteTicket">
+                                        <p>停車地點：<span>{{tempTicket.parkName}}</span></p>
+                                        <p>車牌號碼：<span>{{tempTicket.plate}}</span></p>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-outline-secondary"
+                                                data-bs-dismiss="modal">取消</button>
+                                            <button type="submit" id="submitButton" class="btn btn-warning">確認</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr class="tt col fs-5 text-center bg-warning">
-                                        <th class="col text-center">交易 ID</th>
-                                        <th class="col text-center" style="width: 6%;">車號</th>
-                                        <th class="col text-center">電話</th>
-                                        <th class="col text-center">入場時間</th>
-                                        <th class="col text-center">交易時間</th>
-                                        <th class="col text-center" style="width: 4%;">交易金額</th>
-                                        <th class="col text-center"  style="width: 8%;">交易狀態</th>
-                                        <th class="col text-center"  style="width: 8%;">交易類型</th>
-                                        <th class="col text-center">支付交易代號</th>
-                                        <th class="col text-center">發票號碼</th>
-                                        <th class="col text-center" style="width: 10%;">發票日期</th>
-                                        <th class="col text-center">退款原因</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="fs-6">
-                                    <tr v-for="(item, id) in paidTickets" :key="item.id" class="text-center">
-                                        <td>{{ item.transactionOrderID }}</td>
-                                        <td>{{ item.PlateNumber }}</td>
-                                        <td>{{ item.Phone }}</td>
-                                        <td>{{ item.ArrivalTime }}</td>
-                                        <td>{{ item.PayTime }}</td>
-                                        <td>{{ item.PayAmount }}</td>
-                                        <td>{{ item.Status }}</td>
-                                        <td>{{ item.PayType }}</td>
-                                        <td>{{ item.PlatformTransactionID }}</td>
-                                        <td>{{ item.invoice }}</td>
-                                        <td>{{ item.invoiceDate }}</td>
-                                        <td>{{ item.RefundMessage }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                    </div>
+                </div>
+                <!-- paid-detail -->
+                <div class="tab-pane fade show" id="nav-paid" role="tabpanel" aria-labelledby="nav-paid-tab">
+                    <div class="d-flex justify-content-around mb-2 align-items-center">
+                        <form class="w-50">
+                            <div class="form-floating mb-3">
+                                <select class="form-select" id="floatingSelect"
+                                    aria-label="Floating label select example" required
+                                    v-model="paidSearchData.stationId">
+                                    <option disabled>請選擇公司</option>
+                                    <option v-for="station in stations" :value="station.id">{{ station.name }}
+                                    </option>
+                                </select>
+                                <label for="floatingSelect">請選擇公司</label>
+                            </div>
+                        </form>
+                        <section>
+                            <input type="date" class="pe-3 me-2" v-model="paidSearchData.startDate">
+                            <input type="date" class="pe-3 me-2" v-model="paidSearchData.endDate">
+                        </section>
+                        <button type="submit" class="btn btn-warning ms-3" @click="paidSearch(paidSearchData)">
+                            搜尋
+                        </button>
+                        <button type="button" class="btn btn-outline-warning text-black" @click="logOut">登出</button>
+                    </div>
+                    <div v-if="isLoading" class="d-flex justify-content-center">
+                        <img src="./img/loading.svg" alt="loading">
+                    </div>
+                    <div v-if="!isLoading" class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr class="tt col fs-5 text-center bg-warning">
+                                    <th class="col text-center">交易 ID</th>
+                                    <th class="col text-center" style="width: 6%;">車號</th>
+                                    <th class="col text-center">電話</th>
+                                    <th class="col text-center">入場時間</th>
+                                    <th class="col text-center">交易時間</th>
+                                    <th class="col text-center" style="width: 4%;">交易金額</th>
+                                    <th class="col text-center" style="width: 8%;">交易狀態</th>
+                                    <th class="col text-center" style="width: 8%;">交易類型</th>
+                                    <th class="col text-center">支付交易代號</th>
+                                    <th class="col text-center">發票號碼</th>
+                                    <th class="col text-center" style="width: 10%;">發票日期</th>
+                                    <th class="col text-center">退款原因</th>
+                                </tr>
+                            </thead>
+                            <tbody class="fs-6">
+                                <tr v-for="(item, id) in paidTickets" :key="item.id" class="text-center">
+                                    <td>{{ item.transactionOrderID }}</td>
+                                    <td>{{ item.PlateNumber }}</td>
+                                    <td>{{ item.Phone }}</td>
+                                    <td>{{ item.ArrivalTime }}</td>
+                                    <td>{{ item.PayTime }}</td>
+                                    <td>{{ item.PayAmount }}</td>
+                                    <td>{{ item.Status }}</td>
+                                    <td>{{ item.PayType }}</td>
+                                    <td>{{ item.PlatformTransactionID }}</td>
+                                    <td>{{ item.invoice }}</td>
+                                    <td>{{ item.invoiceDate }}</td>
+                                    <td>{{ item.RefundMessage }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 查無用戶車籍資料 -->
+                    <div class="cantFind-Area" id="cantFind-Area">
+                        <h3>查無相關資料，請重新輸入</h3>
                     </div>
                 </div>
             </div>
@@ -357,10 +359,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/moment.min.js"></script>
-    <!-- <script src="https://unpkg.com/vee-validate"></script> -->
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vee-validate/4.5.8/vee-validate.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@vee-validate/rules@4.5.8/dist/vee-validate-rules.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@vee-validate/i18n@4.5.8/dist/vee-validate-i18n.min.js"></script> -->
     <script type="module" src="./js/index.js"></script>
 </body>
 
